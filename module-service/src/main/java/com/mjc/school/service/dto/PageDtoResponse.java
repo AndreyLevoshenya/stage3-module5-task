@@ -6,15 +6,15 @@ import java.util.Objects;
 public class PageDtoResponse<T> {
     private List<T> entityDtoList;
     private int pageNumber;
-    private long pageCount;
+    private long entitiesCount;
 
     public PageDtoResponse() {
     }
 
-    public PageDtoResponse(List<T> entityDtoList, int pageNumber, long pageCount) {
+    public PageDtoResponse(List<T> entityDtoList, int pageNumber, long entitiesCount) {
         this.entityDtoList = entityDtoList;
         this.pageNumber = pageNumber;
-        this.pageCount = pageCount;
+        this.entitiesCount = entitiesCount;
     }
 
     public List<T> getEntityDtoList() {
@@ -33,12 +33,12 @@ public class PageDtoResponse<T> {
         this.pageNumber = pageNumber;
     }
 
-    public long getPageCount() {
-        return pageCount;
+    public long getEntitiesCount() {
+        return entitiesCount;
     }
 
-    public void setPageCount(long pageCount) {
-        this.pageCount = pageCount;
+    public void setEntitiesCount(long entitiesCount) {
+        this.entitiesCount = entitiesCount;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class PageDtoResponse<T> {
         return "PageDtoResponse{" +
                 "entityDtoList=" + entityDtoList +
                 ", pageNumber=" + pageNumber +
-                ", pageCount=" + pageCount +
+                ", entitiesCount=" + entitiesCount +
                 '}';
     }
 
@@ -55,11 +55,11 @@ public class PageDtoResponse<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PageDtoResponse<?> that = (PageDtoResponse<?>) o;
-        return pageNumber == that.pageNumber && pageCount == that.pageCount && Objects.equals(entityDtoList, that.entityDtoList);
+        return pageNumber == that.pageNumber && entitiesCount == that.entitiesCount && Objects.equals(entityDtoList, that.entityDtoList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(entityDtoList, pageNumber, pageCount);
+        return Objects.hash(entityDtoList, pageNumber, entitiesCount);
     }
 }
