@@ -52,7 +52,7 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
             @RequestParam(name = "search_by", required = false) String searchBy) {
         SearchingRequest searchingRequest = new SearchingRequest(pageNumber, pageSize, sortBy, searchBy);
         PageDtoResponse<AuthorDtoResponse> pageDtoResponse = authorService.readAll(searchingRequest);
-        for(AuthorDtoResponse authorDtoResponse : pageDtoResponse.getEntityDtoList()) {
+        for (AuthorDtoResponse authorDtoResponse : pageDtoResponse.getEntityDtoList()) {
             Link selfRel = linkTo(AuthorController.class).slash(authorDtoResponse.getId()).withSelfRel();
             authorDtoResponse.add(selfRel);
         }

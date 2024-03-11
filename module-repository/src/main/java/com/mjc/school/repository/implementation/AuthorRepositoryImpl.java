@@ -19,7 +19,7 @@ public class AuthorRepositoryImpl extends AbstractRepository<Author, Long> imple
     @Override
     public Optional<Author> readByNewsId(Long newsId) {
         TypedQuery<Author> query = entityManager.createQuery("SELECT a FROM Author a " +
-                "INNER JOIN a.news n WHERE n.id=:newsId", Author.class)
+                        "INNER JOIN a.news n WHERE n.id=:newsId", Author.class)
                 .setParameter("newsId", newsId);
         try {
             return Optional.of(query.getSingleResult());

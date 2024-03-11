@@ -144,7 +144,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
         newsService.deleteById(id);
     }
 
-    @ApiOperation(value = "Get news by news id", response = List.class)
+    @ApiOperation(value = "Get news by params", response = List.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved news by params"),
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),

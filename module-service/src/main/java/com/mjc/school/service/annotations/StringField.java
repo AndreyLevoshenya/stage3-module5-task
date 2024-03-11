@@ -8,5 +8,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StringField {
     int min();
+
     int max();
 }

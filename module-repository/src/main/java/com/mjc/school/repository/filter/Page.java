@@ -13,10 +13,6 @@ public class Page<T> {
         this.pagesCount = pagesCount;
     }
 
-    private enum SortDirection {
-        ASC, DESC
-    }
-
     public List<T> getEntities() {
         return entities;
     }

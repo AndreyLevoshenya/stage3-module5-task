@@ -1,10 +1,7 @@
 package com.mjc.school.controller;
 
 import com.mjc.school.service.dto.PageDtoResponse;
-import com.mjc.school.service.dto.SearchingRequest;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 public interface BaseController<T, R, K> {
 

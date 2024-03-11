@@ -42,8 +42,8 @@ public class News implements BaseEntity<Long> {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "news_tags",
-            joinColumns = { @JoinColumn(name = "news_id")},
-            inverseJoinColumns = { @JoinColumn(name = "tag_id")})
+            joinColumns = {@JoinColumn(name = "news_id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id")})
     private List<Tag> tags = new ArrayList<>();
 
     public News() {

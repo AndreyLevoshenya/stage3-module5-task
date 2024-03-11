@@ -8,7 +8,8 @@ import com.mjc.school.repository.model.Tag;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class NewsRepositoryImpl extends AbstractRepository<News, Long> implements NewsRepository {
@@ -30,24 +31,24 @@ public class NewsRepositoryImpl extends AbstractRepository<News, Long> implement
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if(params.newsTitle() != null) {
+        if (params.newsTitle() != null) {
             predicates.add(criteriaBuilder.like(root.get("title"), "%" + params.newsTitle() + "%"));
         }
-        if(params.newsContent() != null) {
+        if (params.newsContent() != null) {
             predicates.add(criteriaBuilder.like(root.get("content"), "%" + params.newsContent() + "%"));
         }
 
-        if(params.authorName() != null) {
+        if (params.authorName() != null) {
             Join<Author, News> authorNews = root.join("author");
             predicates.add(criteriaBuilder.equal(authorNews.get("name"), params.authorName()));
         }
 
-        if(params.tagIds() != null || params.tagNames() != null) {
+        if (params.tagIds() != null || params.tagNames() != null) {
             Join<Tag, News> newsTags = root.join("tags");
-            if(params.tagIds() != null) {
+            if (params.tagIds() != null) {
                 predicates.add(newsTags.get("id").in(params.tagIds()));
             }
-            if(params.tagNames() != null) {
+            if (params.tagNames() != null) {
                 predicates.add(newsTags.get("name").in(params.tagNames()));
             }
         }
