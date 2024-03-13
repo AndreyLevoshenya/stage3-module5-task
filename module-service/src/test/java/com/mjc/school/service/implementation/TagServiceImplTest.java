@@ -66,7 +66,7 @@ class TagServiceImplTest {
         //then
         assertThat(pageDtoResponse.getEntityDtoList()).isEqualTo(tagDtoMapper.modelListToDtoList(List.of(tag)));
         assertThat(pageDtoResponse.getPageNumber()).isEqualTo(1);
-        assertThat(pageDtoResponse.getPageCount()).isEqualTo(1);
+        assertThat(pageDtoResponse.getEntitiesCount()).isEqualTo(1);
     }
 
     @Test

@@ -94,7 +94,7 @@ class CommentServiceImplTest {
         //then
         assertThat(pageDtoResponse.getEntityDtoList()).isEqualTo(commentDtoMapper.modelListToDtoList(List.of(comment), newsDtoMapper));
         assertThat(pageDtoResponse.getPageNumber()).isEqualTo(1);
-        assertThat(pageDtoResponse.getPageCount()).isEqualTo(1);
+        assertThat(pageDtoResponse.getEntitiesCount()).isEqualTo(1);
     }
 
     @Test

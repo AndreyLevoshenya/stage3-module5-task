@@ -9,15 +9,19 @@ import java.util.List;
 public final class NewsDtoRequest {
     @IdField
     private Long id;
+
     @StringField(min = 5, max = 30)
     @NotNull
     private String title;
+
     @StringField(min = 5, max = 225)
     @NotNull
     private String content;
+
     @IdField
     @NotNull
     private Long authorId;
+
     private List<Long> tagIds;
 
     public NewsDtoRequest() {

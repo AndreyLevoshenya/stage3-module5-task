@@ -7,6 +7,7 @@ import com.mjc.school.service.annotations.StringField;
 public final class AuthorDtoRequest {
     @IdField
     private Long id;
+
     @StringField(min = 3, max = 15)
     @NotNull
     private String name;

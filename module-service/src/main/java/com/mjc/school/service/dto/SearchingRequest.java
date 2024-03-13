@@ -7,10 +7,13 @@ import com.mjc.school.service.annotations.Sort;
 public class SearchingRequest {
     @Min(1)
     private int pageNumber;
+
     @Min(1)
     private int pageSize;
+
     @Sort
     private String sortBy;
+
     @Search
     private String fieldNameAndValue;
 

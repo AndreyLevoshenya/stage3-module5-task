@@ -46,7 +46,7 @@ public class ValidationAspect {
                 }
             }
             if (!violations.isEmpty()) {
-                throw new ValidationException(VALIDATION_EXCEPTION.getErrorCode(), String.format(VALIDATION_EXCEPTION.getErrorMessage(), violations));
+                throw new ValidationException(String.format(VALIDATION_EXCEPTION.getErrorMessage(), violations));
             }
         }
     }

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.mjc.school.service.exceptions.ExceptionErrorCodes.*;
@@ -53,22 +52,20 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional(readOnly = true)
     public NewsDtoResponse readById(@Valid Long id) {
-        if (newsRepository.existById(id)) {
-            News news = newsRepository.readById(id).get();
-            return newsDtoMapper.modelToDto(news);
-        } else {
-            throw new NotFoundException(NEWS_DOES_NOT_EXIST.getErrorCode(), String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), id));
+        if (!newsRepository.existById(id)) {
+            throw new NotFoundException(String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), id));
         }
+        News news = newsRepository.readById(id).get();
+        return newsDtoMapper.modelToDto(news);
     }
 
     @Override
     @Transactional
     public NewsDtoResponse create(@Valid NewsDtoRequest createRequest) {
         if (!authorRepository.existById(createRequest.getAuthorId())) {
-            throw new NotFoundException(NEWS_DOES_NOT_EXIST.getErrorCode(), String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), createRequest.getAuthorId()));
+            throw new NotFoundException(String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), createRequest.getAuthorId()));
         }
         News model = newsDtoMapper.dtoToModel(createRequest, newsRepository, authorRepository, tagRepository);
-
         return newsDtoMapper.modelToDto(newsRepository.create(model));
     }
 
@@ -76,15 +73,15 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public NewsDtoResponse update(@Valid NewsDtoRequest updateRequest) {
         if (!newsRepository.existById(updateRequest.getId())) {
-            throw new NotFoundException(NEWS_DOES_NOT_EXIST.getErrorCode(), String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), updateRequest.getId()));
+            throw new NotFoundException(String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), updateRequest.getId()));
         }
         if (!authorRepository.existById(updateRequest.getAuthorId())) {
-            throw new NotFoundException(AUTHOR_DOES_NOT_EXIST.getErrorCode(), String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), updateRequest.getAuthorId()));
+            throw new NotFoundException(String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), updateRequest.getAuthorId()));
         }
 
         for (Long id : updateRequest.getTagIds()) {
             if (!tagRepository.existById(id)) {
-                throw new NotFoundException(TAG_DOES_NOT_EXIST.getErrorCode(), String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), id));
+                throw new NotFoundException(String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), id));
             }
         }
 
@@ -95,53 +92,36 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public NewsDtoResponse patch(NewsDtoRequest patchRequest) {
-        Long id;
-        String title;
-        String content;
-        Long authorId;
-        List<Long> tagIds = new ArrayList<>();
-        if (patchRequest.getId() != null && newsRepository.existById(patchRequest.getId())) {
-            id = patchRequest.getId();
-        } else {
-            throw new NotFoundException(NEWS_DOES_NOT_EXIST.getErrorCode(), String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), patchRequest.getId()));
+        Long id = patchRequest.getId();
+        String title = patchRequest.getTitle();
+        String content = patchRequest.getContent();
+        Long authorId = patchRequest.getAuthorId();
+        List<Long> tagIds = patchRequest.getTagIds();
+        if (id == null || !newsRepository.existById(id)) {
+            throw new NotFoundException(String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), id));
         }
         News prevNews = newsRepository.readById(id).get();
-        title = patchRequest.getTitle() != null ? patchRequest.getTitle() : prevNews.getTitle();
-        content = patchRequest.getContent() != null ? patchRequest.getContent() : prevNews.getContent();
-        if (patchRequest.getAuthorId() != null) {
-            if (authorRepository.existById(patchRequest.getAuthorId())) {
-                authorId = patchRequest.getAuthorId();
-            } else {
-                throw new NotFoundException(AUTHOR_DOES_NOT_EXIST.getErrorCode(), String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), patchRequest.getId()));
-            }
-        } else {
+        title = title != null ? title : prevNews.getTitle();
+        content = content != null ? content : prevNews.getContent();
+        if (authorId == null) {
             authorId = prevNews.getAuthor().getId();
         }
 
-        if (patchRequest.getTagIds() != null) {
-            for (Long tagId : patchRequest.getTagIds()) {
-                if (!tagRepository.existById(tagId)) {
-                    throw new NotFoundException(TAG_DOES_NOT_EXIST.getErrorCode(), String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), tagId));
-                }
-                tagIds.addAll(patchRequest.getTagIds());
-            }
-        } else {
-            tagIds.addAll(prevNews.getTags().stream().map(Tag::getId).toList());
+        if (tagIds == null) {
+            tagIds = prevNews.getTags().stream().map(Tag::getId).toList();
         }
 
         NewsDtoRequest updateRequest = new NewsDtoRequest(id, title, content, authorId, tagIds);
-
         return update(updateRequest);
     }
 
     @Override
     @Transactional
     public boolean deleteById(@Valid Long id) {
-        if (newsRepository.existById(id)) {
-            return newsRepository.deleteById(id);
-        } else {
-            throw new NotFoundException(NEWS_DOES_NOT_EXIST.getErrorCode(), String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), id));
+        if (!newsRepository.existById(id)) {
+            throw new NotFoundException(String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), id));
         }
+        return newsRepository.deleteById(id);
     }
 
     @Override

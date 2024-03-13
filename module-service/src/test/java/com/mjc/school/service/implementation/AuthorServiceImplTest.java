@@ -73,7 +73,7 @@ class AuthorServiceImplTest {
         //then
         assertThat(pageDtoResponse.getEntityDtoList()).isEqualTo(authorDtoMapper.modelListToDtoList(List.of(author)));
         assertThat(pageDtoResponse.getPageNumber()).isEqualTo(1);
-        assertThat(pageDtoResponse.getPageCount()).isEqualTo(1);
+        assertThat(pageDtoResponse.getEntitiesCount()).isEqualTo(1);
     }
 
     @Test

@@ -55,68 +55,59 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public CommentDtoResponse readById(@Valid Long id) {
-        if (commentRepository.existById(id)) {
-            return commentDtoMapper.modelToDto(commentRepository.readById(id).get(), newsDtoMapper);
-        } else {
-            throw new NotFoundException(COMMENT_DOES_NOT_EXIST.getErrorCode(), String.format(COMMENT_DOES_NOT_EXIST.getErrorMessage(), id));
-
+        if (!commentRepository.existById(id)) {
+            throw new NotFoundException(String.format(COMMENT_DOES_NOT_EXIST.getErrorMessage(), id));
         }
+        return commentDtoMapper.modelToDto(commentRepository.readById(id).get(), newsDtoMapper);
     }
 
     @Override
     @Transactional
     public CommentDtoResponse create(@Valid CommentDtoRequest createRequest) {
         Comment model = commentDtoMapper.dtoToModel(createRequest, newsRepository);
-
         return commentDtoMapper.modelToDto(commentRepository.create(model), newsDtoMapper);
     }
 
     @Override
     @Transactional
     public CommentDtoResponse update(@Valid CommentDtoRequest updateRequest) {
-        if (commentRepository.existById(updateRequest.getId())) {
-            Comment comment = commentDtoMapper.dtoToModel(updateRequest, newsRepository);
-            return commentDtoMapper.modelToDto(commentRepository.update(comment), newsDtoMapper);
-        } else {
-            throw new NotFoundException(COMMENT_DOES_NOT_EXIST.getErrorCode(), String.format(COMMENT_DOES_NOT_EXIST.getErrorMessage(), updateRequest.getId()));
+        if (!commentRepository.existById(updateRequest.getId())) {
+            throw new NotFoundException(String.format(COMMENT_DOES_NOT_EXIST.getErrorMessage(), updateRequest.getId()));
         }
+        Comment comment = commentDtoMapper.dtoToModel(updateRequest, newsRepository);
+        return commentDtoMapper.modelToDto(commentRepository.update(comment), newsDtoMapper);
     }
 
     @Override
     @Transactional
     public CommentDtoResponse patch(CommentDtoRequest patchRequest) {
-        Long id;
-        String content;
-        if (patchRequest.getId() != null && commentRepository.existById(patchRequest.getId())) {
-            id = patchRequest.getId();
-        } else {
-            throw new NotFoundException(COMMENT_DOES_NOT_EXIST.getErrorCode(), String.format(COMMENT_DOES_NOT_EXIST.getErrorMessage(), patchRequest.getId()));
+        Long id = patchRequest.getId();
+        String content = patchRequest.getContent();
+        if (id == null || !commentRepository.existById(id)) {
+            throw new NotFoundException(String.format(COMMENT_DOES_NOT_EXIST.getErrorMessage(), id));
         }
         Comment prevComment = commentRepository.readById(id).get();
-        content = patchRequest.getContent() != null ? patchRequest.getContent() : prevComment.getContent();
+        content = content != null ? content : prevComment.getContent();
 
         CommentDtoRequest updateRequest = new CommentDtoRequest(id, content, prevComment.getNews().getId());
-
         return update(updateRequest);
     }
 
     @Override
     @Transactional
     public boolean deleteById(@Valid Long id) {
-        if (commentRepository.existById(id)) {
-            return commentRepository.deleteById(id);
-        } else {
-            throw new NotFoundException(COMMENT_DOES_NOT_EXIST.getErrorCode(), String.format(COMMENT_DOES_NOT_EXIST.getErrorMessage(), id));
+        if (!commentRepository.existById(id)) {
+            throw new NotFoundException(String.format(COMMENT_DOES_NOT_EXIST.getErrorMessage(), id));
         }
+        return commentRepository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CommentDtoResponse> readByNewsId(@Valid Long newsId) {
-        if (newsRepository.existById(newsId)) {
-            return commentDtoMapper.modelListToDtoList(commentRepository.readByNewsId(newsId), newsDtoMapper);
-        } else {
-            throw new NotFoundException(NEWS_DOES_NOT_EXIST.getErrorCode(), String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), newsId));
+        if (!newsRepository.existById(newsId)) {
+            throw new NotFoundException(String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), newsId));
         }
+        return commentDtoMapper.modelListToDtoList(commentRepository.readByNewsId(newsId), newsDtoMapper);
     }
 }

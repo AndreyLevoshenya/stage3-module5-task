@@ -7,9 +7,11 @@ import com.mjc.school.service.annotations.StringField;
 public final class CommentDtoRequest {
     @IdField
     private Long id;
+
     @StringField(min = 5, max = 255)
     @NotNull
     private String content;
+
     @IdField
     private Long newsId;
 

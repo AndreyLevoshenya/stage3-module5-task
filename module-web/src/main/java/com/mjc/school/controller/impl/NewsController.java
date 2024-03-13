@@ -18,16 +18,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.mjc.school.controller.RestConstants.NEWS_API_PATH;
+import static com.mjc.school.controller.RestConstants.NEWS_V1_API_PATH;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping(value = NEWS_API_PATH)
+@RequestMapping(value = NEWS_V1_API_PATH)
 @Api(produces = MediaType.APPLICATION_JSON_VALUE, value = "Operations for creating, updating, retrieving and deleting news in the application")
 public class NewsController implements BaseController<NewsDtoRequest, NewsDtoResponse, Long> {
-    private static final String VERSION = "version=1";
-
     private final NewsService newsService;
     private final AuthorService authorService;
     private final TagService tagService;
@@ -49,7 +47,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @GetMapping(params = VERSION)
+    @GetMapping
     @ResponseStatus(OK)
     public ResponseEntity<PageDtoResponse<NewsDtoResponse>> readAll(
             @RequestParam(name = "page", required = false, defaultValue = "1") int pageNumber,
@@ -72,7 +70,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @GetMapping(value = "/{id}", params = VERSION)
+    @GetMapping(value = "/{id}")
     @ResponseStatus(OK)
     public ResponseEntity<NewsDtoResponse> readById(@PathVariable Long id) {
         NewsDtoResponse newsDtoResponse = newsService.readById(id);
@@ -88,7 +86,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @PostMapping(params = VERSION)
+    @PostMapping
     @ResponseStatus(CREATED)
     public ResponseEntity<NewsDtoResponse> create(@RequestBody NewsDtoRequest createRequest) {
         NewsDtoResponse newsDtoResponse = newsService.create(createRequest);
@@ -104,7 +102,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @PutMapping(value = "/{id}", params = VERSION)
+    @PutMapping(value = "/{id}")
     @ResponseStatus(OK)
     public ResponseEntity<NewsDtoResponse> update(@PathVariable Long id, @RequestBody NewsDtoRequest updateRequest) {
         updateRequest.setId(id);
@@ -121,7 +119,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @PatchMapping(value = "/{id}", params = VERSION)
+    @PatchMapping(value = "/{id}")
     @ResponseStatus(OK)
     public ResponseEntity<NewsDtoResponse> patch(@PathVariable Long id, @RequestBody NewsDtoRequest updateRequest) {
         updateRequest.setId(id);
@@ -138,7 +136,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @DeleteMapping(value = "/{id}", params = VERSION)
+    @DeleteMapping(value = "/{id}")
     @ResponseStatus(NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         newsService.deleteById(id);
@@ -151,7 +149,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @GetMapping(value = "/get", params = VERSION)
+    @GetMapping(value = "/get")
     @ResponseStatus(OK)
     public ResponseEntity<List<NewsDtoResponse>> readByParams(@RequestBody ParametersDtoRequest parametersDtoRequest) {
         List<NewsDtoResponse> newsDtoResponseList = newsService.readByParams(parametersDtoRequest);
@@ -168,7 +166,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @GetMapping(value = "/{id}/authors", params = VERSION)
+    @GetMapping(value = "/{id}/authors")
     @ResponseStatus(OK)
     public ResponseEntity<AuthorDtoResponse> readAuthorByNewsId(@PathVariable Long id) {
         AuthorDtoResponse authorDtoResponse = authorService.readByNewsId(id);
@@ -184,7 +182,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @GetMapping(value = "/{id}/tags", params = VERSION)
+    @GetMapping(value = "/{id}/tags")
     @ResponseStatus(OK)
     public ResponseEntity<List<TagDtoResponse>> readTagsByNewsId(@PathVariable Long id) {
         List<TagDtoResponse> tagDtoResponseList = tagService.readByNewsId(id);
@@ -202,7 +200,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @GetMapping(value = "/{id}/comments", params = VERSION)
+    @GetMapping(value = "/{id}/comments")
     @ResponseStatus(OK)
     public ResponseEntity<List<CommentDtoResponse>> readCommentsByNewsId(@PathVariable Long id) {
         List<CommentDtoResponse> commentDtoResponseList = commentService.readByNewsId(id);

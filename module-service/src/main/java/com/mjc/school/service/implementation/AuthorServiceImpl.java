@@ -46,12 +46,11 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     @Transactional(readOnly = true)
     public AuthorDtoResponse readById(@Valid Long id) {
-        if (authorRepository.existById(id)) {
-            Author author = authorRepository.readById(id).get();
-            return authorDtoMapper.modelToDto(author);
-        } else {
-            throw new NotFoundException(AUTHOR_DOES_NOT_EXIST.getErrorCode(), String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), id));
+        if (!authorRepository.existById(id)) {
+            throw new NotFoundException(String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), id));
         }
+        Author author = authorRepository.readById(id).get();
+        return authorDtoMapper.modelToDto(author);
     }
 
     @Override
@@ -66,49 +65,43 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     @Transactional
     public AuthorDtoResponse update(@Valid AuthorDtoRequest updateRequest) {
-        if (authorRepository.existById(updateRequest.getId())) {
-            Author author = authorDtoMapper.dtoToModel(updateRequest);
-            return authorDtoMapper.modelToDto(authorRepository.update(author));
-        } else {
-            throw new NotFoundException(AUTHOR_DOES_NOT_EXIST.getErrorCode(), String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), updateRequest.getId()));
+        if (!authorRepository.existById(updateRequest.getId())) {
+            throw new NotFoundException(String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), updateRequest.getId()));
         }
+        Author author = authorDtoMapper.dtoToModel(updateRequest);
+        return authorDtoMapper.modelToDto(authorRepository.update(author));
     }
 
     @Override
     @Transactional
     public AuthorDtoResponse patch(AuthorDtoRequest patchRequest) {
-        Long id;
-        String name;
-        if (patchRequest.getId() != null && authorRepository.existById(patchRequest.getId())) {
-            id = patchRequest.getId();
-        } else {
-            throw new NotFoundException(AUTHOR_DOES_NOT_EXIST.getErrorCode(), String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), patchRequest.getId()));
+        Long id = patchRequest.getId();
+        String name = patchRequest.getName();
+        if (id == null || !authorRepository.existById(id)) {
+            throw new NotFoundException(String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), id));
         }
         Author prevAuthor = authorRepository.readById(id).get();
-        name = patchRequest.getName() != null ? patchRequest.getName() : prevAuthor.getName();
+        name = name != null ? name : prevAuthor.getName();
 
-        AuthorDtoRequest authorDtoRequest = new AuthorDtoRequest(id, name);
-
-        return update(authorDtoRequest);
+        AuthorDtoRequest updateRequest = new AuthorDtoRequest(id, name);
+        return update(updateRequest);
     }
 
     @Override
     @Transactional
     public boolean deleteById(@Valid Long id) {
-        if (authorRepository.existById(id)) {
-            return authorRepository.deleteById(id);
-        } else {
-            throw new NotFoundException(AUTHOR_DOES_NOT_EXIST.getErrorCode(), String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), id));
+        if (!authorRepository.existById(id)) {
+            throw new NotFoundException(String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), id));
         }
+        return authorRepository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public AuthorDtoResponse readByNewsId(@Valid Long newsId) {
-        if (authorRepository.readByNewsId(newsId).isPresent()) {
-            return authorDtoMapper.modelToDto(authorRepository.readByNewsId(newsId).get());
-        } else {
-            throw new NotFoundException(AUTHOR_DOES_NOT_EXIST.getErrorCode(), String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), newsId));
+        if (authorRepository.readByNewsId(newsId).isEmpty()) {
+            throw new NotFoundException(String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), newsId));
         }
+        return authorDtoMapper.modelToDto(authorRepository.readByNewsId(newsId).get());
     }
 }

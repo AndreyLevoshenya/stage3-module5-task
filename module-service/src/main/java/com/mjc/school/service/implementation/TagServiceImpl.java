@@ -52,12 +52,11 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional(readOnly = true)
     public TagDtoResponse readById(@Valid Long id) {
-        if (tagRepository.existById(id)) {
-            Tag tag = tagRepository.readById(id).get();
-            return tagDtoMapper.modelToDto(tag);
-        } else {
-            throw new NotFoundException(TAG_DOES_NOT_EXIST.getErrorCode(), String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), id));
+        if (!tagRepository.existById(id)) {
+            throw new NotFoundException(String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), id));
         }
+        Tag tag = tagRepository.readById(id).get();
+        return tagDtoMapper.modelToDto(tag);
     }
 
     @Override
@@ -70,49 +69,43 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public TagDtoResponse update(@Valid TagDtoRequest updateRequest) {
-        if (tagRepository.existById(updateRequest.getId())) {
-            Tag tag = tagDtoMapper.dtoToModel(updateRequest);
-            return tagDtoMapper.modelToDto(tagRepository.update(tag));
-        } else {
-            throw new NotFoundException(TAG_DOES_NOT_EXIST.getErrorCode(), String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), updateRequest.getId()));
+        if (!tagRepository.existById(updateRequest.getId())) {
+            throw new NotFoundException(String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), updateRequest.getId()));
         }
+        Tag tag = tagDtoMapper.dtoToModel(updateRequest);
+        return tagDtoMapper.modelToDto(tagRepository.update(tag));
     }
 
     @Override
     @Transactional
     public TagDtoResponse patch(TagDtoRequest patchRequest) {
-        Long id;
-        String name;
-        if (patchRequest.getId() != null && tagRepository.existById(patchRequest.getId())) {
-            id = patchRequest.getId();
-        } else {
-            throw new NotFoundException(TAG_DOES_NOT_EXIST.getErrorCode(), String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), patchRequest.getId()));
+        Long id = patchRequest.getId();
+        String name = patchRequest.getName();
+        if (id == null || !tagRepository.existById(id)) {
+            throw new NotFoundException(String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), id));
         }
         Tag prevTag = tagRepository.readById(id).get();
-        name = patchRequest.getName() != null ? patchRequest.getName() : prevTag.getName();
+        name = name != null ? name : prevTag.getName();
 
         TagDtoRequest updateRequest = new TagDtoRequest(id, name);
-
         return update(updateRequest);
     }
 
     @Override
     @Transactional
     public boolean deleteById(@Valid Long id) {
-        if (tagRepository.existById(id)) {
-            return tagRepository.deleteById(id);
-        } else {
-            throw new NotFoundException(TAG_DOES_NOT_EXIST.getErrorCode(), String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), id));
+        if (!tagRepository.existById(id)) {
+            throw new NotFoundException(String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), id));
         }
+        return tagRepository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TagDtoResponse> readByNewsId(@Valid Long newsId) {
-        if (newsRepository.existById(newsId)) {
-            return tagDtoMapper.modelListToDtoList(tagRepository.readByNewsId(newsId));
-        } else {
-            throw new NotFoundException(NEWS_DOES_NOT_EXIST.getErrorCode(), String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), newsId));
+        if (!newsRepository.existById(newsId)) {
+            throw new NotFoundException(String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), newsId));
         }
+        return tagDtoMapper.modelListToDtoList(tagRepository.readByNewsId(newsId));
     }
 }

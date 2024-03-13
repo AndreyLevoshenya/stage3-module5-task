@@ -18,16 +18,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.mjc.school.controller.RestConstants.TAGS_API_PATH;
+import static com.mjc.school.controller.RestConstants.TAGS_V1_API_PATH;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping(value = TAGS_API_PATH)
+@RequestMapping(value = TAGS_V1_API_PATH)
 @Api(produces = MediaType.APPLICATION_JSON_VALUE, value = "Operations for creating, updating, retrieving and deleting tags in the application")
 public class TagController implements BaseController<TagDtoRequest, TagDtoResponse, Long> {
-    private static final String VERSION = "version=1";
-
     private final TagService tagService;
 
     @Autowired
@@ -43,7 +41,7 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @GetMapping(params = VERSION)
+    @GetMapping
     @ResponseStatus(OK)
     public ResponseEntity<PageDtoResponse<TagDtoResponse>> readAll(
             @RequestParam(name = "page", required = false, defaultValue = "1") int pageNumber,
@@ -68,7 +66,7 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @GetMapping(value = "/{id}", params = VERSION)
+    @GetMapping(value = "/{id}")
     @ResponseStatus(OK)
     public ResponseEntity<TagDtoResponse> readById(@PathVariable Long id) {
         TagDtoResponse tagDtoResponse = tagService.readById(id);
@@ -85,7 +83,7 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @PostMapping(params = VERSION)
+    @PostMapping
     @ResponseStatus(CREATED)
     public ResponseEntity<TagDtoResponse> create(@RequestBody TagDtoRequest createRequest) {
         TagDtoResponse tagDtoResponse = tagService.create(createRequest);
@@ -102,7 +100,7 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @PutMapping(value = "/{id}", params = VERSION)
+    @PutMapping(value = "/{id}")
     @ResponseStatus(OK)
     public ResponseEntity<TagDtoResponse> update(@PathVariable Long id, @RequestBody TagDtoRequest updateRequest) {
         updateRequest.setId(id);
@@ -120,7 +118,7 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @PatchMapping(value = "/{id}", params = VERSION)
+    @PatchMapping(value = "/{id}")
     @ResponseStatus(OK)
     public ResponseEntity<TagDtoResponse> patch(@PathVariable Long id, @RequestBody TagDtoRequest updateRequest) {
         updateRequest.setId(id);
@@ -138,7 +136,7 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 500, message = "Application failed to process the request")})
-    @DeleteMapping(value = "/{id}", params = VERSION)
+    @DeleteMapping(value = "/{id}")
     @ResponseStatus(NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         tagService.deleteById(id);

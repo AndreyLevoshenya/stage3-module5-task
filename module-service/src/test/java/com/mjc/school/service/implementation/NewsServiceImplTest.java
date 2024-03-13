@@ -99,7 +99,7 @@ class NewsServiceImplTest {
         //then
         assertThat(pageDtoResponse.getEntityDtoList()).isEqualTo(newsDtoMapper.modelListToDtoList(List.of(news)));
         assertThat(pageDtoResponse.getPageNumber()).isEqualTo(1);
-        assertThat(pageDtoResponse.getPageCount()).isEqualTo(1);
+        assertThat(pageDtoResponse.getEntitiesCount()).isEqualTo(1);
     }
 
     @Test

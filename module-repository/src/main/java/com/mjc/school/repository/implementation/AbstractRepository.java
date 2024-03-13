@@ -38,8 +38,10 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<T> root = criteriaQuery.from(entityClass);
+
         Predicate predicate = getPredicate(searchCriteria, root, criteriaBuilder);
         criteriaQuery.where(predicate);
+
         setOrder(pagination, criteriaQuery, root, criteriaBuilder);
 
         int pageNumber = pagination.getPageNumber();
@@ -49,9 +51,9 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
         query.setFirstResult((pageNumber - 1) * pageSize);
         query.setMaxResults(pageSize);
 
-        long pagesCount = getPagesCount(predicate, criteriaBuilder);
+        long entitiesCount = getEntitiesCount(predicate, criteriaBuilder);
         List<T> entities = query.getResultList();
-        return new Page<>(entities, pageNumber, pagesCount);
+        return new Page<>(entities, pageNumber, entitiesCount);
     }
 
     private Predicate getPredicate(SearchCriteria searchCriteria, Root<T> root, CriteriaBuilder criteriaBuilder) {
@@ -73,7 +75,7 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
         }
     }
 
-    private long getPagesCount(Predicate predicate, CriteriaBuilder criteriaBuilder) {
+    private long getEntitiesCount(Predicate predicate, CriteriaBuilder criteriaBuilder) {
         CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
         Root<T> root = countQuery.from(entityClass);
         countQuery.select(criteriaBuilder.count(root)).where(predicate);

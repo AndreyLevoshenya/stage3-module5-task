@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import static com.mjc.school.service.exceptions.ExceptionErrorCodes.*;
+
 @ControllerAdvice
 public class ApiExceptionHandler {
 
@@ -17,7 +19,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleValidationException(ValidationException e) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ApiException apiException = new ApiException(
-                e.getErrorCode(), e.getMessage(),
+                VALIDATION_EXCEPTION.getErrorCode(), e.getMessage(),
                 status,
                 LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         );
@@ -29,7 +31,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleNotFoundException(NotFoundException e) {
         HttpStatus status = HttpStatus.NOT_FOUND;
         ApiException apiException = new ApiException(
-                e.getErrorCode(), e.getMessage(),
+                RESOURCE_NOT_FOUND.getErrorCode(), e.getMessage(),
                 status,
                 LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         );
@@ -37,4 +39,15 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, status);
     }
 
+    @ExceptionHandler(value = {ApiVersionNotSupportedException.class})
+    public ResponseEntity<Object> handleNotFoundException(ApiVersionNotSupportedException e) {
+        HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
+        ApiException apiException = new ApiException(
+                API_VERSION_NOT_SUPPORTED.getErrorCode(), e.getMessage(),
+                status,
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        );
+
+        return new ResponseEntity<>(apiException, status);
+    }
 }

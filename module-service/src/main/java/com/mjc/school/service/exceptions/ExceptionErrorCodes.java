@@ -1,11 +1,14 @@
 package com.mjc.school.service.exceptions;
 
+
 public enum ExceptionErrorCodes {
-    NEWS_DOES_NOT_EXIST(Constants.ERROR_CODE_000001, "News with id %d does not exist"),
-    AUTHOR_DOES_NOT_EXIST(Constants.ERROR_CODE_000002, "Author id does not exist. Author id is: %s"),
-    TAG_DOES_NOT_EXIST(Constants.ERROR_CODE_000003, "Tag with id %d does not exist"),
-    COMMENT_DOES_NOT_EXIST(Constants.ERROR_CODE_000004, "Comment with id %d does not exist"),
-    VALIDATION_EXCEPTION(Constants.ERROR_CODE_000005, "Validation failed %s");
+    NEWS_DOES_NOT_EXIST("000001", "News with id %d does not exist"),
+    AUTHOR_DOES_NOT_EXIST("000002", "Author id does not exist. Author id is: %s"),
+    TAG_DOES_NOT_EXIST("000003", "Tag with id %d does not exist"),
+    COMMENT_DOES_NOT_EXIST("000004", "Comment with id %d does not exist"),
+    VALIDATION_EXCEPTION("000005", "Validation failed %s"),
+    API_VERSION_NOT_SUPPORTED("000006", "Api version %s is not supported"),
+    RESOURCE_NOT_FOUND("000007", "Resource not found");
 
     private final String errorCode;
     private final String errorMessage;
@@ -21,13 +24,5 @@ public enum ExceptionErrorCodes {
 
     public String getErrorCode() {
         return errorCode;
-    }
-
-    private static class Constants {
-        public static final String ERROR_CODE_000001 = "000001";
-        public static final String ERROR_CODE_000002 = "000002";
-        public static final String ERROR_CODE_000003 = "000003";
-        public static final String ERROR_CODE_000004 = "000004";
-        public static final String ERROR_CODE_000005 = "000005";
     }
 }
